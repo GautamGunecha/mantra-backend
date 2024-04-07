@@ -1,0 +1,47 @@
+# Dependency directories
+node_modules/
+
+# Environment variables
+.env
+
+# Logs
+logs/
+*.log
+
+# Output of build tools
+build/
+dist/
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Editor-specific files
+.vscode/
+*.swp
+*.swo
+
+# Testing
+coverage/
+
+# Dependency lock files
+package-lock.json
+yarn.lock
+
+# Runtime data
+npm-debug.log*
+yarn-error.log*
+
+# IDE files
+.idea/
+*.iml
+
+# Ignore local development configuration
+config/local.json
+
+# Ignore sensitive or environment-specific information
+config/secrets.json
+
+# Ignore compiled files
+*.min.js
+*.min.css
