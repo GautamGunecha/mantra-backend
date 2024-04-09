@@ -45,3 +45,9 @@ config/secrets.json
 # Ignore compiled files
 *.min.js
 *.min.css
+
+# private key
+private.key
+
+# sessions
+sessions/
