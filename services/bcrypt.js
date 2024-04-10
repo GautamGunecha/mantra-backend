@@ -14,4 +14,9 @@ const encryptPassword = async (password) => {
   return encryptedPassword;
 };
 
-module.exports = { encryptPassword };
+const comparePassword = async (password, encryptedPassword) => {
+  const validatePassword = await bcrypt.compare(password, encryptedPassword);
+  return validatePassword;
+};
+
+module.exports = { encryptPassword, comparePassword };

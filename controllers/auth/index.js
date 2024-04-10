@@ -2,7 +2,7 @@ const _ = require("lodash");
 
 const User = require("../../models/user");
 const ApplicationError = require("../../middlewares/applicationError");
-const { encryptPassword } = require("../../services/bcrypt");
+const { encryptPassword, comparePassword } = require("../../services/bcrypt");
 const {
   newUserVerificationToken,
   validateNewUserVerificationToken,
@@ -85,9 +85,6 @@ const validateUser = async (req, res, next) => {
     });
 
     await newUser.save();
-    const sessionToken = generateAuthToken(newUser.id);
-
-    req.session.SESSION_TOKEN = sessionToken;
     res
       .status(201)
       .send({ success: true, info: "Registered success.", data: {} });
@@ -96,4 +93,44 @@ const validateUser = async (req, res, next) => {
   }
 };
 
-module.exports = { register, validateUser };
+const login = async (req, res, next) => {
+  try {
+    const { email = "", password = "" } = req.body;
+    if (_.isEmpty(email) || _.isEmpty(password)) {
+      throw new ApplicationError("Required user creadentails to login", 400);
+    }
+
+    const user = await User.findOne({ email });
+    if (_.isEmpty(user)) {
+      throw new Error("Invalid user creadentails", 400);
+    }
+
+    const isPasswordValid = await comparePassword(password, user.password);
+    if (!isPasswordValid) {
+      throw new Error("Invalid Password", 400);
+    }
+
+    const authToken = generateAuthToken(user.id);
+    req.session.authToken = authToken;
+
+    res.status(200).send({ success: true, info: "Login success", data: {} });
+  } catch (error) {
+    next(error);
+  }
+};
+
+const logout = async (req, res, next) => {
+  try {
+    req.session?.destroy();
+    res.send({ success: true, info: "Logout Success", data: {} });
+  } catch (error) {
+    next(error);
+  }
+};
+
+module.exports = {
+  register,
+  validateUser,
+  login,
+  logout,
+};
