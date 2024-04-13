@@ -9,7 +9,7 @@ const userSchema = new Schema(
     },
     lastName: {
       type: String,
-      default: ''
+      default: "",
     },
     email: {
       type: String,
@@ -18,7 +18,19 @@ const userSchema = new Schema(
     },
     password: {
       type: String,
-      required: true
+      required: true,
+    },
+    profile: {
+      type: mongoose.Types.ObjectId,
+      ref: "Profile",
+    },
+    active: {
+      type: Boolean,
+      default: true,
+    },
+    email_verified: {
+      type: Boolean,
+      default: true,
     },
   },
   {

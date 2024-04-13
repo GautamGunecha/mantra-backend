@@ -8,35 +8,32 @@ const colors = require("colors");
 const morgan = require("morgan");
 const fs = require("fs");
 const path = require("path");
-const session = require("express-session");
 const cookieParser = require("cookie-parser");
-const FileStore = require("session-file-store")(session);
+const { rateLimit } = require("express-rate-limit");
+const xssClean = require("xss-clean");
+const hpp = require("hpp");
+const mongoSanitize = require("express-mongo-sanitize");
 
 const connectToMongoDB = require("./configs/mongoose");
 const { apiNotFound, errorHandler } = require("./middlewares/errorHandler");
 const app = express();
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  limit: 100,
+  standardHeaders: "draft-7",
+  legacyHeaders: false,
+});
 
 app.use(cors());
 app.use(helmet());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(morgan("combined"));
-app.use(
-  session({
-    secret: process.env.SESSION_SECRET_KEY,
-    resave: false,
-    saveUninitialized: true,
-    cookie: {
-      secure: false,
-      maxAge: 24 * 60 * 60 * 1000,
-    },
-    store: new FileStore({
-      path: "./sessions",
-      retries: 0,
-    }),
-  })
-);
 app.use(cookieParser());
+app.use(limiter);
+app.use(xssClean());
+app.use(hpp());
+app.use(mongoSanitize());
 
 global.fs = fs;
 global.path = path;

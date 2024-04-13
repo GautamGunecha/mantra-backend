@@ -22,26 +22,23 @@ const triggerEmailNotification = (config) => {
     );
   }
 
-  switch (source) {
-    case "NEW_USER_REGISTRATION":
-      const { firstName = "", verificationUrl = "", lastName = "" } = config;
+  const template = generateTemplate(config);
+  config.template = template;
+  sendEmail(config);
 
-      const fileName = _.toLower(source) + ".ejs";
-      const filePath = "../utilities/templates/" + fileName;
-      const templateFilePath = path.resolve(__dirname, filePath);
-      const templateContent = fs.readFileSync(templateFilePath, "utf8");
+  return {};
+};
 
-      const template = ejs.render(templateContent, {
-        firstName,
-        verificationUrl,
-        lastName,
-      });
-      config.template = template;
-      sendEmail(config);
-      break;
-    default:
-      break;
-  }
+const generateTemplate = (config) => {
+  const { source = "" } = config;
+  const fileName = _.toLower(source) + ".ejs";
+  const filePath = "../utilities/templates/" + fileName;
+
+  const templateFilePath = path.resolve(__dirname, filePath);
+  const templateContent = fs.readFileSync(templateFilePath, "utf8");
+
+  const template = ejs.render(templateContent, { config });
+  return template;
 };
 
 module.exports = { triggerEmailNotification };

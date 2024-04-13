@@ -48,8 +48,8 @@ const createTransporter = async () => {
 
 const sendEmail = async (config) => {
   const { subject = "", to = "", template } = config;
-
   const transporter = await createTransporter();
+
   const mailOptions = {
     subject,
     to,
