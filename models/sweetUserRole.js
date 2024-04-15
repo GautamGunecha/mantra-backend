@@ -6,10 +6,20 @@ const sweetUserRoleSchema = new Schema(
     role: {
       type: mongoose.Types.ObjectId,
       ref: "Role",
+      required: true,
     },
-    user: {
+    assignedTo: {
       type: mongoose.Types.ObjectId,
       ref: "User",
+      required: true,
+    },
+    assignedBy: {
+      type: mongoose.Types.ObjectId,
+      ref: "User",
+    },
+    active: {
+      type: Boolean,
+      default: true,
     },
   },
   {
@@ -17,7 +27,7 @@ const sweetUserRoleSchema = new Schema(
   }
 );
 
-sweetUserRoleSchema.index({ user: 1 });
+sweetUserRoleSchema.index({ assignedTo: 1, role: 1 });
 
 const SweetUserRole = model("SweetUserRole", sweetUserRoleSchema);
 module.exports = SweetUserRole;

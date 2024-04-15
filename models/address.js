@@ -29,6 +29,12 @@ const addressSchema = new Schema(
     primary: {
       type: Boolean,
     },
+    lat: {
+      type: Number,
+    },
+    long: {
+      type: Number,
+    },
   },
   { timestamps: true }
 );

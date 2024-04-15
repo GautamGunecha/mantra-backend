@@ -1,12 +1,16 @@
 const _ = require("lodash");
 
 const User = require("../../models/user");
+const Profile = require("../../models/profile");
+const SweetUserRole = require("../../models/sweetUserRole");
+
 const ApplicationError = require("../../middlewares/applicationError");
 const { encryptPassword, comparePassword } = require("../../services/bcrypt");
 const {
   newUserVerificationToken,
   validateNewUserVerificationToken,
   generateAuthToken,
+  validateAuthToken,
   generatePasswordResetToken,
   validatePasswordResetToken,
 } = require("../../services/jwt");
@@ -78,11 +82,18 @@ const validateUser = async (req, res, next) => {
       throw new ApplicationError("Email already registered!", 400);
     }
 
-    const newUser = new User({
+    const newUserProfile = new Profile({
       firstName,
       lastName,
       email,
+    });
+
+    const profile = await newUserProfile.save();
+
+    const newUser = new User({
+      email,
       password,
+      profile: profile.id,
     });
 
     await newUser.save();
@@ -113,12 +124,16 @@ const login = async (req, res, next) => {
 
     const authToken = generateAuthToken(user.id);
     let flag = false;
-    if (_.isEqual(NODE_ENV)) {
+    if (_.isEqual(NODE_ENV, "PRODUCTION")) {
+      flag = true;
     }
+
+    await user.updateOne({ $set: { loggedinAt: new Date() } });
+
     res
       .cookie("authToken", authToken, {
         expire: 24 * 60 * 60 * 1000,
-        // signed: true,
+        signed: flag,
       })
       .status(200)
       .send({ success: true, info: "Login success", data: {} });
@@ -129,6 +144,16 @@ const login = async (req, res, next) => {
 
 const logout = async (req, res, next) => {
   try {
+    const authToken = req.cookies.authToken;
+    const { payload = {} } = validateAuthToken(authToken);
+
+    const { id } = payload;
+    if (_.isEmpty(authToken) || _.isEmpty(id)) {
+      throw new ApplicationError("Invalid session", 400);
+    }
+
+    await User.findOneAndUpdate({ _id: id }, { loggedoutAt: new Date() });
+
     res.clearCookie("authToken");
     res.send({ success: true, info: "Logout Success", data: {} });
   } catch (error) {

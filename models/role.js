@@ -5,8 +5,20 @@ const roleSchema = new Schema(
   {
     roleType: {
       type: String,
-      enum: ["admin", "vendor", "customer", "delivery_partners"],
+      enum: ["admin", "vendor", "customer", "delivery_partner"],
       unique: true,
+    },
+    roleCreatedBy: {
+      type: mongoose.Types.ObjectId,
+      ref: "Users",
+    },
+    active: {
+      type: Boolean,
+      default: true,
+    },
+    deactivatedBy: {
+      type: mongoose.Types.ObjectId,
+      ref: "Users",
     },
   },
   { timestamps: true }

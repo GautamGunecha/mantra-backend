@@ -3,14 +3,6 @@ const { Schema, model } = mongoose;
 
 const userSchema = new Schema(
   {
-    firstName: {
-      type: String,
-      required: true,
-    },
-    lastName: {
-      type: String,
-      default: "",
-    },
     email: {
       type: String,
       required: true,
@@ -32,6 +24,12 @@ const userSchema = new Schema(
       type: Boolean,
       default: true,
     },
+    loggedinAt: {
+      type: Date,
+    },
+    loggedoutAt: {
+      type: Date,
+    },
   },
   {
     timestamps: true,
@@ -39,6 +37,7 @@ const userSchema = new Schema(
 );
 
 userSchema.index({ email: 1 }, { unique: true });
+userSchema.index({ profile: 1 }, { unique: true });
 
 const User = model("Users", userSchema);
 module.exports = User;
