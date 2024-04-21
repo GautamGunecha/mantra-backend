@@ -2,34 +2,21 @@ const nodemailer = require("nodemailer");
 const { google } = require("googleapis");
 
 const OAuth2 = google.auth.OAuth2;
+const keys = require("../configs/keys");
 
-const {
-  SENDER_EMAIL,
-  GOOGLE_CONSOLE_REFRESH_TOKEN,
-  GOOGLE_CONSOLE_CLIENT_SECRET,
-  GOOGLE_CONSOLE_CLIENT_ID,
-  GOOGLE_PLAYGROUND_URL,
-} = process.env;
+const { GOOGLE_CONSOLE, SENDER_EMAIL } = keys;
+const { REFRESH_TOKEN, CLIENT_SECRET, CLIENT_ID, PLAYGROUND_URL } =
+  GOOGLE_CONSOLE;
 
-const createTransporter = async () => {
-  const oauth2Client = new OAuth2(
-    GOOGLE_CONSOLE_CLIENT_ID,
-    GOOGLE_CONSOLE_CLIENT_SECRET,
-    GOOGLE_PLAYGROUND_URL
-  );
+const sendEmail = (config) => {
+  const { subject = "", to = "", template } = config;
 
+  const oauth2Client = new OAuth2(CLIENT_ID, CLIENT_SECRET, PLAYGROUND_URL);
   oauth2Client.setCredentials({
-    refresh_token: GOOGLE_CONSOLE_REFRESH_TOKEN,
+    refresh_token: REFRESH_TOKEN,
   });
 
-  const accessToken = await new Promise((resolve, reject) => {
-    oauth2Client.getAccessToken((err, token) => {
-      if (err) {
-        reject();
-      }
-      resolve(token);
-    });
-  });
+  const accessToken = oauth2Client.getAccessToken();
 
   const transporter = nodemailer.createTransport({
     service: "gmail",
@@ -37,18 +24,11 @@ const createTransporter = async () => {
       type: "OAuth2",
       user: SENDER_EMAIL,
       accessToken,
-      clientId: GOOGLE_CONSOLE_CLIENT_ID,
-      clientSecret: GOOGLE_CONSOLE_CLIENT_SECRET,
-      refreshToken: GOOGLE_CONSOLE_REFRESH_TOKEN,
+      clientId: CLIENT_ID,
+      clientSecret: CLIENT_SECRET,
+      refreshToken: REFRESH_TOKEN,
     },
   });
-
-  return transporter;
-};
-
-const sendEmail = async (config) => {
-  const { subject = "", to = "", template } = config;
-  const transporter = await createTransporter();
 
   const mailOptions = {
     subject,
@@ -57,7 +37,7 @@ const sendEmail = async (config) => {
     html: template,
   };
 
-  await transporter.sendMail(mailOptions, (err, info) => {
+  transporter.sendMail(mailOptions, (err, info) => {
     if (err) {
       console.error(err);
     }

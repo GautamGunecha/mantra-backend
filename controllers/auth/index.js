@@ -3,6 +3,7 @@ const _ = require("lodash");
 const User = require("../../models/user");
 const Profile = require("../../models/profile");
 const SweetUserRole = require("../../models/sweetUserRole");
+const Role = require("../../models/role");
 
 const ApplicationError = require("../../middlewares/applicationError");
 const { encryptPassword, comparePassword } = require("../../services/bcrypt");
@@ -16,7 +17,8 @@ const {
 } = require("../../services/jwt");
 const { triggerEmailNotification } = require("../../utilities/notifications");
 const { validatePassword } = require("../../utilities/helpers/auth");
-const { CLIENT_URL, NODE_ENV } = process.env;
+const keys = require("../../configs/keys");
+const { CLIENT_URL, NODE_ENV } = keys;
 
 const register = async (req, res, next) => {
   try {
@@ -46,16 +48,17 @@ const register = async (req, res, next) => {
     };
 
     const token = newUserVerificationToken(newUserCredentials);
-    const verificationUrl = `${CLIENT_URL}auth/validate/email/${token}`;
-
-    triggerEmailNotification({
+    const verificationUrl = `${CLIENT_URL}validate/email/${token}`;
+    const notificationConfig = {
       verificationUrl,
       firstName,
       to: email,
       lastName,
       source: "NEW_USER_REGISTRATION",
       subject: "Email Verification",
-    });
+    };
+
+    triggerEmailNotification(notificationConfig);
 
     res.send({
       success: true,
@@ -89,14 +92,23 @@ const validateUser = async (req, res, next) => {
     });
 
     const profile = await newUserProfile.save();
+    const role = await Role.findOne({
+      roleType: "customer",
+      active: true,
+    }).lean();
 
-    const newUser = new User({
+    const newUser = await User.create({
       email,
       password,
-      profile: profile.id,
+      profile: profile._id,
     });
 
-    await newUser.save();
+    await SweetUserRole.create({
+      role: role._id,
+      active: true,
+      assignedTo: newUser._id,
+    });
+
     res
       .status(201)
       .send({ success: true, info: "Registered success.", data: {} });

@@ -18,6 +18,9 @@ const {
 } = require("../controllers/role");
 const { create: createSweetUserRole } = require("../controllers/sweetUserRole");
 const { create: createProduct } = require("../controllers/product");
+const { get: getBrands } = require("../controllers/brand");
+
+// =========================== open api's ===========================
 
 // auth api
 router.route("/auth/register").post(register);
@@ -26,6 +29,9 @@ router.route("/auth/login").post(login);
 router.route("/auth/logout").post(logout);
 router.route("/auth/forgot/password").post(forgotPassword);
 router.route("/auth/reset/password").post(resetPassword);
+
+// brand api
+router.route("/brands").get(getBrands);
 
 // =========================== required authentication ===========================
 

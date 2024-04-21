@@ -8,33 +8,48 @@ const productSchema = new Schema(
       required: true,
     },
     description: {
-      type: String,
+      type: mongoose.Types.ObjectId,
+      ref: "ProductDescription",
       required: true,
     },
     brand: {
-      type: String,
+      type: mongoose.Types.ObjectId,
       required: true,
+      ref: "brand",
     },
     price: {
       type: Number,
       required: true,
     },
+    size: {
+      type: String,
+      required: true,
+      enum: ["10ml", "20ml", "50ml", "100ml", "150ml", "200ml"],
+      default: "100ml",
+    },
     quantity: {
       type: Number,
       required: true,
-      min: 0,
+    },
+    uuid: {
+      type: String,
+      unique: true,
+      required: true,
     },
     images: [
       {
         type: String,
       },
     ],
-    categories: [
-      {
-        type: mongoose.Types.ObjectId,
-        ref: "Category",
-      },
-    ],
+    categories: {
+      type: mongoose.Types.ObjectId,
+      ref: "Category",
+    },
+
+    seller: {
+      type: mongoose.Types.ObjectId,
+      ref: "User",
+    },
     isActive: {
       type: Boolean,
       default: true,
@@ -44,6 +59,9 @@ const productSchema = new Schema(
     timestamps: true,
   }
 );
+
+productSchema.index({ uuid: 1 }, { unique: true });
+productSchema.index({ seller: 1 });
 
 const Product = model("Products", productSchema);
 module.exports = Product;

@@ -1,7 +1,8 @@
 const jwt = require("jsonwebtoken");
 const fs = require("fs");
+const keys = require("../configs/keys");
 
-const { SECRET_AUTH_KEY, PASSWORD_RESET_KEY } = process.env;
+const { SECRET_AUTH_KEY, PASSWORD_RESET_KEY } = keys;
 
 const privateKey = fs.readFileSync("private.key", "utf8");
 

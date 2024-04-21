@@ -18,7 +18,7 @@ const create = async ({ body = {}, ACTIVE_USER = {} }, res, next) => {
 
     const newRole = new Role({
       roleType,
-      roleCreatedBy: ACTIVE_USER.id,
+      roleCreatedBy: ACTIVE_USER._id,
     });
 
     await newRole.save();
@@ -43,7 +43,7 @@ const update = async ({ body = {}, ACTIVE_USER = {} }, res, next) => {
 
     const role = await Role.findOne({
       roleType: roleTypeToBeUpdated,
-      roleCreatedBy: ACTIVE_USER.id,
+      roleCreatedBy: ACTIVE_USER._id,
     });
 
     if (_.isEmpty(role)) {
@@ -88,7 +88,7 @@ const deleteRole = async ({ body = {}, ACTIVE_USER = {} }, res, next) => {
       {
         $set: {
           active: false,
-          deactivatedBy: ACTIVE_USER.id,
+          deactivatedBy: ACTIVE_USER._id,
         },
       }
     );

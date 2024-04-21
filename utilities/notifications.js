@@ -3,12 +3,13 @@ const ejs = require("ejs");
 
 const ApplicationError = require("../middlewares/applicationError");
 const sendEmail = require("../services/nodemailer");
+const keys = require("../configs/keys");
 
 const triggerEmailNotification = (config) => {
-  const { NODE_ENV } = process.env;
-  if (_.isEmpty(NODE_ENV) || _.isEqual(NODE_ENV, "development")) {
-    return {};
-  }
+  // const { NODE_ENV } = keys;
+  // if (_.isEmpty(NODE_ENV) || _.isEqual(NODE_ENV, "development")) {
+  //   return {};
+  // }
 
   if (_.isEmpty(config)) {
     throw new ApplicationError("Configs required to trigger notification", 400);
@@ -24,8 +25,8 @@ const triggerEmailNotification = (config) => {
 
   const template = generateTemplate(config);
   config.template = template;
-  sendEmail(config);
 
+  sendEmail(config);
   return {};
 };
 

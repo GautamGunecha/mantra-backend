@@ -1,0 +1,17 @@
+const keys = {
+  NODE_ENV: process.env.NODE_ENV,
+  MONGODB_URI: process.env.MONGODB_URI,
+  CLIENT_URL: process.env.CLIENT_URL,
+  GOOGLE_CONSOLE: {
+    CLIENT_ID: process.env.GOOGLE_CONSOLE_CLIENT_ID,
+    CLIENT_SECRET: process.env.GOOGLE_CONSOLE_CLIENT_SECRET,
+    REFRESH_TOKEN: process.env.GOOGLE_CONSOLE_REFRESH_TOKEN,
+    PLAYGROUND_URL: process.env.GOOGLE_PLAYGROUND_URL,
+  },
+  SESSION_SECRET_KEY: process.env.SESSION_SECRET_KEY,
+  SECRET_AUTH_KEY: process.env.SECRET_AUTH_KEY,
+  PASSWORD_RESET_KEY: process.env.PASSWORD_RESET_KEY,
+  SENDER_EMAIL: process.env.SENDER_EMAIL,
+};
+
+module.exports = keys;

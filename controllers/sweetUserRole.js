@@ -44,7 +44,7 @@ const create = async ({ body = {}, ACTIVE_USER = {} }, res, next) => {
 
     if (!_.isEmpty(sweetUserRole)) {
       throw new ApplicationError(
-        `${roleType} has already been assigned to ${userEmail}`,
+        `${roleType} role has already been assigned to ${userEmail}`,
         400
       );
     }
@@ -63,6 +63,30 @@ const create = async ({ body = {}, ACTIVE_USER = {} }, res, next) => {
   }
 };
 
+const update = async ({ body = {}, ACTIVE_USER = {} }, res, next) => {
+  try {
+  } catch (error) {
+    next(error);
+  }
+};
+
+const deleteUserRole = async ({ body = {}, ACTIVE_USER = {} }, res, next) => {
+  try {
+  } catch (error) {
+    next(error);
+  }
+};
+
+const getUserRoles = async ({ body = {}, ACTIVE_USER }, res, next) => {
+  try {
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   create,
+  update,
+  deleteUserRole,
+  getUserRoles,
 };
