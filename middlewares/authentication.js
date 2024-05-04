@@ -9,13 +9,23 @@ const { validateAuthToken } = require("../services/jwt");
 
 const auth = async (req, res, next) => {
   try {
-    const authToken = req?.cookies?.authToken;
+    let authToken = _.get(req, "cookies.authToken", "");
+    const authHeader = _.get(req.headers, "authorization", "");
+
+    if (!_.isEmpty(authHeader) && authHeader.startsWith("Bearer ")) {
+      authToken = authHeader.split(" ")[1];
+    }
+
     if (_.isEmpty(authToken)) {
       throw new ApplicationError("Access denied.", 403);
     }
 
     const { payload = {} } = validateAuthToken(authToken);
     const { id } = payload;
+
+    if (_.isEmpty(id)) {
+      throw new ApplicationError("Access denied.", 403);
+    }
 
     const user = await User.findById({ _id: id })
       .select("-password")
@@ -43,8 +53,8 @@ const auth = async (req, res, next) => {
 
     next();
   } catch (error) {
-    await req.session.abortTransaction();
-    req.session.endSession();
+    // await req.session.abortTransaction();
+    // req.session.endSession();
     next(error);
   }
 };

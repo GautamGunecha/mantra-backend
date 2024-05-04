@@ -124,31 +124,41 @@ const login = async (req, res, next) => {
       throw new ApplicationError("Required user creadentails to login", 400);
     }
 
-    const user = await User.findOne({ email });
+    const user = await User.findOne({ email }).populate("profile").lean();
     if (_.isEmpty(user)) {
-      throw new Error("Invalid user creadentails", 400);
+      throw new ApplicationError("Invalid user creadentails", 400);
     }
 
     const isPasswordValid = await comparePassword(password, user.password);
     if (!isPasswordValid) {
-      throw new Error("Invalid Password", 400);
+      throw new ApplicationError("Wrong Credentials! Try again.", 400);
     }
 
-    const authToken = generateAuthToken(user.id);
-    let flag = false;
-    if (_.isEqual(NODE_ENV, "PRODUCTION")) {
-      flag = true;
-    }
+    const authToken = generateAuthToken(user._id);
+    await User.updateOne(
+      { _id: user._id },
+      { $set: { loggedinAt: new Date() } }
+    );
 
-    await user.updateOne({ $set: { loggedinAt: new Date() } });
+    const sweetUserRole = await SweetUserRole.find({
+      assignedTo: user._id,
+      active: true,
+    }).populate("role");
+
+    const assignedRoles = _.map(sweetUserRole, "role.roleType");
+    user.role = assignedRoles;
+    const currentUser = _.omit(user, "password");
 
     res
       .cookie("authToken", authToken, {
         expire: 24 * 60 * 60 * 1000,
-        signed: flag,
       })
       .status(200)
-      .send({ success: true, info: "Login success", data: {} });
+      .send({
+        success: true,
+        info: "Login success",
+        data: { currentUser, token: authToken },
+      });
   } catch (error) {
     next(error);
   }
@@ -157,6 +167,11 @@ const login = async (req, res, next) => {
 const logout = async (req, res, next) => {
   try {
     const authToken = req.cookies.authToken;
+    if (_.isEmpty(authToken)) {
+      res.send({ success: true, info: "User already logged out.", data: {} });
+      return;
+    }
+
     const { payload = {} } = validateAuthToken(authToken);
 
     const { id } = payload;
