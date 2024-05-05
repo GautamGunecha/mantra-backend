@@ -124,7 +124,15 @@ const login = async (req, res, next) => {
       throw new ApplicationError("Required user creadentails to login", 400);
     }
 
-    const user = await User.findOne({ email }).populate("profile").lean();
+    const user = await User.findOne({ email })
+      .populate({
+        path: "profile",
+        populate: {
+          path: "address",
+        },
+      })
+      .lean();
+
     if (_.isEmpty(user)) {
       throw new ApplicationError("Invalid user creadentails", 400);
     }

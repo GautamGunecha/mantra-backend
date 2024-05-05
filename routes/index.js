@@ -19,6 +19,12 @@ const {
 const { create: createSweetUserRole } = require("../controllers/sweetUserRole");
 const { create: createProduct } = require("../controllers/product");
 const { get: getBrands } = require("../controllers/brand");
+const {
+  create: addAddress,
+  update: updateAddress,
+  deleteAddress,
+  getAddress,
+} = require("../controllers/address");
 
 // =========================== open api's ===========================
 
@@ -37,6 +43,12 @@ router.route("/brands").get(getBrands);
 
 // profile routes
 router.route("/profile").put(auth, updateProfile);
+
+// address routes
+router.route("/address").post(auth, addAddress);
+router.route("/address").get(auth, getAddress);
+router.route("/address").put(auth, updateAddress);
+router.route("/address").delete(auth, deleteAddress);
 
 // =========================== admin access only api's ===========================
 
