@@ -27,10 +27,7 @@ const create = async (req, res, next) => {
     }
 
     if (primary) {
-      await Address.updateMany(
-        { profile: profile._id, primary: true },
-        { primary: false }
-      );
+      await Address.updateMany({ profile: profile._id }, { primary: false });
     }
 
     const newAddress = new Address({
@@ -51,7 +48,7 @@ const create = async (req, res, next) => {
 
     res.status(201).json({
       success: true,
-      info: "Address created successfully",
+      info: "address has been created successfully.",
       data: {
         address: newAddress,
       },

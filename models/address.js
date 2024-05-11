@@ -27,8 +27,8 @@ const addressSchema = new Schema(
     },
     country: {
       type: String,
-      default: "India",
-      enum: ["India"],
+      default: "india",
+      enum: ["india"],
     },
     primary: {
       type: Boolean,
