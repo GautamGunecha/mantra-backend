@@ -258,6 +258,43 @@ const resetPassword = async ({ body = {} }, res, next) => {
   }
 };
 
+const activeUser = async (req, res, next) => {
+  try {
+    const { ACTIVE_USER } = req;
+
+    const user = await User.findOne({ _id: ACTIVE_USER._id })
+      .populate({
+        path: "profile",
+        populate: {
+          path: "address",
+        },
+      })
+      .lean();
+
+    const sweetUserRole = await SweetUserRole.find({
+      assignedTo: user._id,
+      active: true,
+    }).populate("role");
+
+    const assignedRoles = _.map(sweetUserRole, "role.roleType");
+    user.role = assignedRoles;
+    const currentUser = _.omit(user, "password");
+
+    await req.session.commitTransaction();
+    req.session.endSession();
+
+    res.status(200).send({
+      success: true,
+      info: "current active user",
+      data: { currentUser },
+    });
+  } catch (error) {
+    await req.session.abortTransaction();
+    req.session.endSession();
+    next(error);
+  }
+};
+
 module.exports = {
   register,
   validateUser,
@@ -265,4 +302,5 @@ module.exports = {
   logout,
   forgotPassword,
   resetPassword,
+  activeUser,
 };

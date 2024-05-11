@@ -72,7 +72,39 @@ const update = async (req, res, next) => {
 
 const deleteAddress = async (req, res, next) => {
   try {
+    const { ACTIVE_USER, body } = req;
+    const { profile } = ACTIVE_USER;
+    const { _id: addressId, primary } = body;
+
+    const address = await Address.findOne({ _id: addressId });
+    if (_.isEmpty(address)) {
+      throw new ApplicationError("Address has already been deleted.", 400);
+    }
+
+    await Profile.updateOne(
+      { _id: profile._id },
+      { $pull: { address: addressId } }
+    );
+
+    if (primary) {
+      await Address.findOneAndUpdate(
+        { profile: profile._id, _id: { $ne: addressId } },
+        { $set: { primary: true } },
+        { new: true }
+      );
+    }
+
+    await Address.findByIdAndDelete(addressId);
+
+    await req.session.commitTransaction();
+    req.session.endSession();
+
+    res
+      .status(200)
+      .json({ success: true, info: "Address deleted successfully", data: {} });
   } catch (error) {
+    await req.session.abortTransaction();
+    req.session.endSession();
     next(error);
   }
 };

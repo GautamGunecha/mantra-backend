@@ -7,6 +7,7 @@ const {
   logout,
   forgotPassword,
   resetPassword,
+  activeUser,
 } = require("../controllers/auth");
 const { auth, isAdmin, isVendor } = require("../middlewares/authentication");
 const { update: updateProfile } = require("../controllers/profile");
@@ -40,6 +41,9 @@ router.route("/auth/reset/password").post(resetPassword);
 router.route("/brands").get(getBrands);
 
 // =========================== required authentication ===========================
+
+// get currently active user
+router.route("/auth/active/user").get(auth, activeUser);
 
 // profile routes
 router.route("/profile").put(auth, updateProfile);
