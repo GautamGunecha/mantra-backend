@@ -27,6 +27,8 @@ const {
   getAddress,
 } = require("../controllers/address");
 
+const { addMoney, checkBalance } = require("../controllers/wallet");
+
 // =========================== open api's ===========================
 
 // auth api
@@ -53,6 +55,10 @@ router.route("/address").post(auth, addAddress);
 router.route("/address").get(auth, getAddress);
 router.route("/address").put(auth, updateAddress);
 router.route("/address").delete(auth, deleteAddress);
+
+// wallet access routes
+router.route("/wallet/add").post(auth, addMoney);
+router.route("/wallet/balance").get(auth, checkBalance);
 
 // =========================== admin access only api's ===========================
 
