@@ -28,6 +28,8 @@ const {
 } = require("../controllers/address");
 
 const { addMoney, checkBalance } = require("../controllers/wallet");
+const { instamojoPaymentResponse } = require("../services/webhooks");
+const paymentHandler = require("../middlewares/paymentsHandler");
 
 // =========================== open api's ===========================
 
@@ -41,6 +43,11 @@ router.route("/auth/reset/password").post(resetPassword);
 
 // brand api
 router.route("/brands").get(getBrands);
+
+// webhooks
+router
+  .route("/instamojo/response")
+  .post(paymentHandler, instamojoPaymentResponse);
 
 // =========================== required authentication ===========================
 

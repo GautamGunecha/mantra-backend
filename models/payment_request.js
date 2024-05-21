@@ -58,6 +58,17 @@ const paymentRequestSchema = new Schema(
     redirectUri: {
       type: String,
     },
+    response: {
+      status: {
+        type: String,
+      },
+      amount: {
+        type: String,
+      },
+      fees: {
+        type: String,
+      },
+    },
   },
   {
     timestamps: true,

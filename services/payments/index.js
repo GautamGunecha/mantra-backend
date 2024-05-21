@@ -27,7 +27,7 @@ const createPaymentRequest = async (config, ACTIVE_USER) => {
       email: ACTIVE_USER.email,
       phone: ACTIVE_USER.profile.phone,
       redirect_url: "",
-      webhook: MANTRA_WEBHOOK_URI,
+      webhook: "https://webhook.site/26bccf40-700e-4f52-bb97-b48f7c332547",
     },
   };
 

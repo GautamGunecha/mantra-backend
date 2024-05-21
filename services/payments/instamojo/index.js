@@ -38,6 +38,31 @@ const initiatePaymentRequest = async (requestBody) => {
   return response;
 };
 
+const getPaymentInfo = async (requestBody) => {
+  try {
+    const { payment_id } = requestBody;
+    if (_.isEmpty(payment_id)) {
+      return {};
+    }
+
+    const { accessToken } = await generateAccessToken();
+    const config = {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken}`,
+      },
+    };
+
+    const url = `https://test.instamojo.com/v2/payments/${payment_id}/`;
+    const method = "get";
+
+    const response = await processRequest(method, url, {}, config);
+    return response;
+  } catch (error) {
+    console.error(error);
+  }
+};
+
 const generateAccessToken = async () => {
   const oldTokens = await tokenRecords();
   if (!_.isEmpty(oldTokens)) {
@@ -93,4 +118,4 @@ const tokenRecords = async () => {
   return tokenRecord;
 };
 
-module.exports = { initiatePaymentRequest };
+module.exports = { initiatePaymentRequest, getPaymentInfo };
