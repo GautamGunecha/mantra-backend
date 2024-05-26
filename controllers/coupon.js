@@ -18,6 +18,7 @@ const create = async (req, res, next) => {
       maxUsageCountAllowed,
       condition,
       validityTill,
+      isValid,
     } = body;
 
     const couponUuid = fromString(code);
@@ -45,6 +46,7 @@ const create = async (req, res, next) => {
     const newCouponCode = new Coupon({
       uuid: couponUuid,
       code: code,
+      isValid,
       generatedBy: ACTIVE_USER._id,
       discountPercentage,
       maxUsageCountAllowed,

@@ -1,52 +1,23 @@
 const mongoose = require("mongoose");
 const { Schema, model } = mongoose;
 
-const cartSchema = new Schema(
-  {
-    user: {
-      type: mongoose.Types.ObjectId,
-      ref: "User",
-      unique: true,
-      required: true,
+const cartSchema = new Schema({
+  user: { type: Schema.Types.ObjectId, ref: "User" },
+  totalCartValue: Number,
+  isActive: Boolean,
+  items: [
+    {
+      product: { type: Schema.Types.ObjectId, ref: "Product" },
+      quantity: Number,
+      price: Number,
+      total: Number,
+      discount: Number,
     },
-    items: [
-      {
-        product: {
-          type: mongoose.Types.ObjectId,
-          ref: "Products",
-        },
-        quantity: {
-          type: Number,
-        },
-        price: {
-          type: Number,
-        },
-        total: {
-          type: Number,
-        },
-        discount: {
-          type: Number,
-          default: 0,
-        },
-      },
-    ],
-    totalCartValue: {
-      type: Number,
-      default: 0,
-    },
-    couponApplied: {
-      type: mongoose.Types.ObjectId,
-      ref: "coupon",
-    },
-    isActive: {
-      type: Boolean,
-      default: true,
-    },
-  },
-  {
-    timestamps: true,
-  }
-);
+  ],
+  couponApplied: { type: Schema.Types.ObjectId, ref: "Coupon" },
+  createdAt: { type: Date, default: Date.now },
+  updatedAt: { type: Date, default: Date.now },
+});
 
 cartSchema.index({ user: 1 });
 

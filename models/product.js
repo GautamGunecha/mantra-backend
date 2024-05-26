@@ -36,7 +36,17 @@ const productSchema = new Schema(
     },
     quantity: { type: Number, required: true },
     uuid: { type: String, unique: true, required: true },
-    images: [{ type: String }],
+    images: [
+      {
+        type: String,
+        validate: {
+          validator: function (v) {
+            return v.match(/(http[s]?:\/\/.*\.(?:png|jpg|gif|svg|jpeg))/i);
+          },
+          message: (props) => `${props.value} is not a valid image URL!`,
+        },
+      },
+    ],
     categories: { type: mongoose.Types.ObjectId, ref: "Category" },
     seller: { type: mongoose.Types.ObjectId, ref: "User" },
     isActive: { type: Boolean, default: true },

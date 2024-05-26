@@ -39,5 +39,5 @@ const userSchema = new Schema(
 userSchema.index({ email: 1 }, { unique: true });
 userSchema.index({ profile: 1 }, { unique: true });
 
-const User = model("Users", userSchema);
+const User = model("User", userSchema);
 module.exports = User;
