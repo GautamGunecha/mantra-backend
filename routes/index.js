@@ -30,6 +30,16 @@ const {
 const { addMoney, checkBalance } = require("../controllers/wallet");
 const { instamojoPaymentResponse } = require("../services/webhooks");
 const paymentHandler = require("../middlewares/paymentsHandler");
+const {
+  create: addProductsToCart,
+  deleteCartProduct,
+  get: getCartDetails,
+} = require("../controllers/cartController");
+const {
+  create: generateCoupon,
+  get: getCoupon,
+  update: updateCoupon,
+} = require("../controllers/coupon");
 
 // =========================== open api's ===========================
 
@@ -43,6 +53,9 @@ router.route("/auth/reset/password").post(resetPassword);
 
 // brand api
 router.route("/brand").get(getBrands);
+
+// coupon
+router.route("/coupon").get(getCoupon);
 
 // webhooks
 router
@@ -67,6 +80,11 @@ router.route("/address").delete(auth, deleteAddress);
 router.route("/wallet/add").post(auth, addMoney);
 router.route("/wallet/balance").get(auth, checkBalance);
 
+// cart access routes
+router.route("/cart").post(auth, addProductsToCart);
+router.route("/cart").get(auth, getCartDetails);
+router.route("/cart").delete(auth, deleteCartProduct);
+
 // =========================== admin access only api's ===========================
 
 // role
@@ -85,5 +103,9 @@ router.route("/brand").post(isAdmin, createBrand);
 
 // product routes
 router.route("/product").post(isVendor, createProduct);
+
+// coupon routes
+router.route("/coupon").post(isVendor, generateCoupon);
+router.route("/coupon").put(isVendor, updateCoupon);
 
 module.exports = router;

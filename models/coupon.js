@@ -18,6 +18,11 @@ const couponTypes = [
 
 const couponSchema = new Schema(
   {
+    uuid: {
+      type: String,
+      required: true,
+      unique: true,
+    },
     code: {
       type: String,
       required: true,
@@ -51,13 +56,18 @@ const couponSchema = new Schema(
       type: Date,
       required: true,
     },
+    condition: {
+      amount: {
+        type: Number,
+      },
+    },
   },
   {
     timestamps: true,
   }
 );
 
-couponSchema.index({ code: 1 }, { unique: true });
+couponSchema.index({ code: 1, uuid: 1 }, { unique: true });
 couponSchema.index({ generatedBy: 1 });
 couponSchema.index({ isValid: 1 });
 couponSchema.index({ couponType: 1 });

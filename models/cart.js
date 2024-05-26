@@ -6,6 +6,7 @@ const cartSchema = new Schema(
     user: {
       type: mongoose.Types.ObjectId,
       ref: "User",
+      unique: true,
       required: true,
     },
     items: [
@@ -16,15 +17,12 @@ const cartSchema = new Schema(
         },
         quantity: {
           type: Number,
-          required: true,
         },
         price: {
           type: Number,
-          required: true,
         },
         total: {
           type: Number,
-          required: true,
         },
         discount: {
           type: Number,
@@ -36,9 +34,9 @@ const cartSchema = new Schema(
       type: Number,
       default: 0,
     },
-    coupon: {
+    couponApplied: {
       type: mongoose.Types.ObjectId,
-      ref: "Coupon",
+      ref: "coupon",
     },
     isActive: {
       type: Boolean,
