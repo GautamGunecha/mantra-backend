@@ -3,57 +3,43 @@ const { Schema, model } = mongoose;
 
 const productSchema = new Schema(
   {
-    title: {
+    title: { type: String, required: true },
+    description: [
+      {
+        para: {
+          type: String,
+          required: true,
+        },
+      },
+    ],
+    productProfile: {
       type: String,
       required: true,
     },
-    description: {
-      type: mongoose.Types.ObjectId,
-      ref: "ProductDescription",
-      required: true,
-    },
-    brand: {
-      type: mongoose.Types.ObjectId,
-      required: true,
-      ref: "brand",
-    },
-    price: {
-      type: Number,
-      required: true,
-    },
+    notes: [
+      {
+        noteType: {
+          type: String,
+          required: true,
+        },
+        value: {
+          type: String,
+          required: true,
+        },
+      },
+    ],
+    brand: { type: mongoose.Types.ObjectId, ref: "Brand", required: true },
+    price: { type: Number, required: true },
     size: {
       type: String,
       required: true,
-      enum: ["10ml", "20ml", "50ml", "100ml", "150ml", "200ml"],
-      default: "100ml",
     },
-    quantity: {
-      type: Number,
-      required: true,
-    },
-    uuid: {
-      type: String,
-      unique: true,
-      required: true,
-    },
-    images: [
-      {
-        type: String,
-      },
-    ],
-    categories: {
-      type: mongoose.Types.ObjectId,
-      ref: "Category",
-    },
-
-    seller: {
-      type: mongoose.Types.ObjectId,
-      ref: "User",
-    },
-    isActive: {
-      type: Boolean,
-      default: true,
-    },
+    quantity: { type: Number, required: true },
+    uuid: { type: String, unique: true, required: true },
+    images: [{ type: String }],
+    categories: { type: mongoose.Types.ObjectId, ref: "Category" },
+    seller: { type: mongoose.Types.ObjectId, ref: "User" },
+    isActive: { type: Boolean, default: true },
   },
   {
     timestamps: true,
@@ -63,5 +49,5 @@ const productSchema = new Schema(
 productSchema.index({ uuid: 1 }, { unique: true });
 productSchema.index({ seller: 1 });
 
-const Product = model("Products", productSchema);
+const Product = model("Product", productSchema);
 module.exports = Product;

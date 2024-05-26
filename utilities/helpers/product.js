@@ -1,43 +1,30 @@
 const _ = require("lodash");
 const Category = require("../../models/category");
 
-const findOrCreateCategory = async (config) => {
-  const { category: productCategory, subCategory, preference } = config;
-  const filter = {
-    primary: productCategory,
-    sub: subCategory,
-    preference,
-  };
+const findOrCreateCategory = async (categories) => {
+  const { primary, sub, preference } = categories;
 
-  let category = await Category.findOne(filter);
-
-  if (_.isEmpty(category)) {
-    const update = {
-      $setOnInsert: filter,
-    };
-
-    const options = {
-      upsert: true,
-      new: true,
-      setDefaultsOnInsert: true,
-    };
-
-    category = await Category.findOneAndUpdate(filter, update, options);
-  }
+  const category = await Category.findOneAndUpdate(
+    { primary, sub, preference },
+    { $setOnInsert: { primary, sub, preference } },
+    { new: true, upsert: true }
+  );
 
   return category;
 };
 
-const createProductDescription = async (config) => {
-  const {
-    headLiner,
-    sentType = "",
-    fragranceDescription = {},
-    notes = [],
-  } = description;
+const validateNotes = (notes) => {
+  const requiredNoteTypes = ["Top Notes", "Middle Notes", "Base Notes"];
+  const noteTypes = notes.map((note) => note.noteType);
+
+  const hasAllNoteTypes = requiredNoteTypes.every((requiredType) =>
+    noteTypes.includes(requiredType)
+  );
+
+  return hasAllNoteTypes;
 };
 
 module.exports = {
   findOrCreateCategory,
-  createProductDescription,
+  validateNotes,
 };

@@ -76,17 +76,29 @@ const isAdmin = async (req, res, next) => {
 
 const isVendor = async (req, res, next) => {
   auth(req, res, async () => {
-    const { ACTIVE_USER } = req;
-    const { roles = [] } = ACTIVE_USER;
+    try {
+      const { ACTIVE_USER } = req;
+      if (_.isEmpty(ACTIVE_USER)) {
+        throw new ApplicationError("Access Denied", 403);
+      }
 
-    if (_.includes(roles, "admin") || _.includes(roles, "vendor")) {
-      next();
-    } else {
-      await req.session.abortTransaction();
-      req.session.endSession();
-      res
-        .status(403)
-        .send({ success: false, info: "Access denied.", data: {} });
+      const { roles = [] } = ACTIVE_USER;
+
+      if (_.isEmpty(roles)) {
+        throw new ApplicationError("Access Denied", 403);
+      }
+
+      if (_.includes(roles, "admin") || _.includes(roles, "vendor")) {
+        next();
+      } else {
+        await req.session.abortTransaction();
+        req.session.endSession();
+        res
+          .status(403)
+          .send({ success: false, info: "Access denied.", data: {} });
+      }
+    } catch (error) {
+      next(error);
     }
   });
 };

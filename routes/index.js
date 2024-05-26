@@ -19,7 +19,7 @@ const {
 } = require("../controllers/role");
 const { create: createSweetUserRole } = require("../controllers/sweetUserRole");
 const { create: createProduct } = require("../controllers/product");
-const { get: getBrands } = require("../controllers/brand");
+const { get: getBrands, create: createBrand } = require("../controllers/brand");
 const {
   create: addAddress,
   update: updateAddress,
@@ -42,7 +42,7 @@ router.route("/auth/forgot/password").post(forgotPassword);
 router.route("/auth/reset/password").post(resetPassword);
 
 // brand api
-router.route("/brands").get(getBrands);
+router.route("/brand").get(getBrands);
 
 // webhooks
 router
@@ -77,6 +77,9 @@ router.route("/role").delete(isAdmin, deleteRole);
 
 // role
 router.route("/sweetuserrole").post(isAdmin, createSweetUserRole);
+
+// brand
+router.route("/brand").post(isAdmin, createBrand);
 
 // =========================== vendor access only api's ===========================
 
