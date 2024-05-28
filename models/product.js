@@ -49,6 +49,10 @@ const productSchema = new Schema(
     ],
     categories: { type: mongoose.Types.ObjectId, ref: "Category" },
     seller: { type: mongoose.Types.ObjectId, ref: "User" },
+    tags: {
+      type: String,
+      enum: ["in-stock", "stock-out", "not-availabe", "limited-quantity"],
+    },
     isActive: { type: Boolean, default: true },
   },
   {

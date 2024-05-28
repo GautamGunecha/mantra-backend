@@ -101,4 +101,6 @@ const get = async ({ ACTIVE_USER }, res, next) => {
 
 module.exports = {
   create,
+  update,
+  get,
 };

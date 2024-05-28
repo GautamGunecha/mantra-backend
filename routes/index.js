@@ -41,6 +41,8 @@ const {
   update: updateCoupon,
 } = require("../controllers/coupon");
 
+const { create: createOrder } = require("../controllers/order");
+
 // =========================== open api's ===========================
 
 // auth api
@@ -84,6 +86,9 @@ router.route("/wallet/balance").get(auth, checkBalance);
 router.route("/cart").post(auth, addProductsToCart);
 router.route("/cart").get(auth, getCartDetails);
 router.route("/cart").delete(auth, deleteCartProduct);
+
+// order
+router.route("/order").post(auth, createOrder);
 
 // =========================== admin access only api's ===========================
 

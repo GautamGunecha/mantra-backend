@@ -99,9 +99,18 @@ const create = async (req, res, next) => {
 const get = async (req, res, next) => {
   try {
     const { ACTIVE_USER } = req;
+    let { page, limit } = req.query;
+
+    page = parseInt(page) || 1;
+    limit = parseInt(limit) || 10;
+
+    const skip = (page - 1) * limit;
 
     const cart = await Cart.findOne({ user: ACTIVE_USER._id })
-      .populate("items.product")
+      .populate({
+        path: "items.product",
+        options: { skip, limit }, // Pagination options for items
+      })
       .populate("couponApplied");
 
     await Promise.all([

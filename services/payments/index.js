@@ -42,7 +42,7 @@ const createPaymentRequest = async (config, ACTIVE_USER) => {
     amount: balance,
     reason: purpose,
     status: _.lowerCase(data.status),
-    provider: "instamojo",
+    provider,
     paymentUrl: data.longurl,
     shortUrl: data.shorturl,
     user: ACTIVE_USER._id,
